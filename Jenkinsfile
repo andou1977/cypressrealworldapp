@@ -13,18 +13,15 @@ pipeline {
             }
         }
 
-        stage('Install Node & Dependencies') {
+        stage('Install dependencies') {
             steps {
-                sh '''
-                    node -v || true
-                    npm ci
-                '''
+                bat 'npm ci'
             }
         }
 
         stage('Run Cypress tests') {
             steps {
-                sh 'npx cypress run --browser chrome'
+                bat 'npx cypress run --browser chrome'
             }
         }
 
