@@ -1,14 +1,8 @@
 pipeline {
-    agent {
-        docker {
-            image 'cypress/included:12.17.3'
-            args '-u root'
-        }
-    }
+    agent any
 
     options {
         timestamps()
-        ansiColor('xterm')
     }
 
     stages {
@@ -19,9 +13,12 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('Install Node & Dependencies') {
             steps {
-                sh 'npm ci'
+                sh '''
+                    node -v || true
+                    npm ci
+                '''
             }
         }
 
@@ -31,7 +28,7 @@ pipeline {
             }
         }
 
-        stage('Archive test artifacts') {
+        stage('Archive artifacts') {
             steps {
                 archiveArtifacts artifacts: 'cypress/videos/**', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'cypress/screenshots/**', allowEmptyArchive: true
@@ -43,9 +40,6 @@ pipeline {
     post {
         always {
             echo "Pipeline terminé."
-        }
-        failure {
-            echo "Les tests Cypress ont échoué."
         }
     }
 }
